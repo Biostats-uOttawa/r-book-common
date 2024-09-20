@@ -38,12 +38,13 @@ o_lang <- setdiff(langs, lang)
 print(o_lang)
 for (j in o_lang) {
   o_book <- books$bk[books$lg == j]
-  for (k in seq_len(nrow(dat_f))) {
-    readLines(paste0("_book/", dat_f$f_files[k])) |>
+  dat_o <- filter(dat_f, get(j) != "")
+  for (k in seq_len(nrow(dat_o))) {
+    readLines(paste0("_book/", dat_o$f_files[k])) |>
       stringr::str_replace(
         pattern = paste0("/", o_book, '">'),
-        replace = paste0("/", o_book, "/", dat_f$nb[k], dat_f[[j]][k], '.html">')
+        replace = paste0("/", o_book, "/", dat_o$nb[k], dat_o[[j]][k], '.html">')
       ) |>
-      writeLines(con = paste0("_book/", dat_f$f_files[k]))
+      writeLines(con = paste0("_book/", dat_o$f_files[k]))
   }
 }
