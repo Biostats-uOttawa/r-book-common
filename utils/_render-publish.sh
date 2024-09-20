@@ -10,7 +10,7 @@
   
     echo publishing
 
-  quarto publish --no-render --no-browser gh-pages
+  quarto publish --no-prompt --no-render --no-browser gh-pages
 
 
 
