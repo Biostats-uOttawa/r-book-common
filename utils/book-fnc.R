@@ -5,26 +5,34 @@ d <- function(u1, u2, sd1, sd2) {
 }
 
 plot_pwr <- function(
-    n, d, sig_level, type
+    n, d, sig_level, alternative
     ) {
-  typ_num <- ifelse(type == "two.sample", 2, 1)
+  typ_num <- ifelse(alternative == "two.sided", 2, 1)
   qc <- qt(1 - sig_level / typ_num, (n - 1) * 2)
   if (typ_num == 2) {
     qcl <- c(-qc, qc)
-  } else {
-    qcl <- qc
+  } else if (alternative == "one.pos"){
+    qcl <- c(qc, qc)
+  } else if (alternative == "one.neg"){
+    qcl <- c(-qc, -qc)
   } 
   ncp <- d * sqrt(n*2) / 2
-  dat <- data.frame(
-    x = seq(-4, 4, length = 200),
+  dat <- data.frame(x = seq(-4, 4, length = 400)) %>%
+  mutate(
     y0 = dt(x, (n - 1) * 2),
     y1 = dt(x, (n - 1) * 2, ncp = ncp)
-  ) %>%
-    mutate(
-      beta = ifelse(x <= qc, y1, 0),
-      pow = ifelse(x > qc, y1, 0)
+  ) 
+  if (d > 0){
+    dat <- mutate(dat,
+      beta = ifelse(x <= qcl[2], y1, 0),
+      pow = ifelse(x > qcl[2], y1, 0)
     )
-
+  } else {
+    dat <- mutate(dat,
+      beta = ifelse(x >= qcl[1], y1, 0),
+      pow = ifelse(x < qcl[1], y1, 0)
+    )
+  }
   ggplot(dat, aes(x = x)) +
     geom_line(aes(y = y0), color = "red") +
     geom_line(aes(y = y1), color = "blue") +
