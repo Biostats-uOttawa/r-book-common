@@ -22,17 +22,32 @@ plot_pwr <- function(
     y0 = dt(x, (n - 1) * 2),
     y1 = dt(x, (n - 1) * 2, ncp = ncp)
   ) 
-  if (d > 0){
+
+  if (alternative == "two.samples"){
+        dat <- mutate(dat,
+        alpha = ifelse(x < qcl[1] | x > qcl[2], y0, 0)
+      )
+      if (d > 0) {
+        dat <- mutate(dat,
+          beta = ifelse(x <= qcl[2], y1, 0)
+        )
+      } else {
+        dat <- mutate(dat,
+          beta = ifelse(x >= qcl[1], y1, 0)
+        )
+      }
+  } else if (alternative == "one.pos")
+{
     dat <- mutate(dat,
-      beta = ifelse(x <= qcl[2], y1, 0),
-      pow = ifelse(x > qcl[2], y1, 0)
+       beta = ifelse(x <= qcl[1], y1, 0),
+        alpha = ifelse(x > qcl[1], y0, 0)
     )
-  } else {
+}  else if (alternative == "one.neg") {
     dat <- mutate(dat,
       beta = ifelse(x >= qcl[1], y1, 0),
-      pow = ifelse(x < qcl[1], y1, 0)
+      alpha = ifelse(x < qcl[1], y0, 0)
     )
-  }
+}
   ggplot(dat, aes(x = x)) +
     geom_line(aes(y = y0), color = "red") +
     geom_line(aes(y = y1), color = "blue") +
@@ -42,9 +57,9 @@ plot_pwr <- function(
       fill = rgb(red = 0, green = 0.2, blue = 1, alpha = 0.5)
     ) +
     geom_area(
-      aes(x = x, y = pow),
+      aes(x = x, y = alpha),
       fill = rgb(red = 1, green = 0, blue = 0.2, alpha = 0.5)
     ) +
     theme_classic() +
-    ylab("dt(x)")
+    ylab("dt(x)") 
 }
