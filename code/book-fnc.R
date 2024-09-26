@@ -23,7 +23,7 @@ plot_pwr <- function(
     y1 = dt(x, (n - 1) * 2, ncp = ncp)
   ) 
 
-  if (alternative == "two.samples"){
+  if (alternative == "two.sided"){
         dat <- mutate(dat,
         alpha = ifelse(x < qcl[1] | x > qcl[2], y0, 0)
       )
