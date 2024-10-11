@@ -1,7 +1,13 @@
 #!/bin/bash
 
 if [[ $# -eq 0 ]]; then
+read -p "Do you want to render? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
 render=true
+else render=--no-render
+fi
 else
 if [ $1 != "--no-render" ]; then
   echo "argument not recognized"
