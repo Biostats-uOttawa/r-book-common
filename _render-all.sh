@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [[ $# -eq 0 ]]; then
 read -p "Do you want to render? " -n 1 -r
 echo    # (optional) move to a new line
@@ -17,22 +18,16 @@ render=$1
 fi
 fi
 
-if [ $render != "--no-render" ]; then
-  echo Rendering
-  quarto render
-if [ $? -ne 0 ]; then
-  echo "render command failed"
-  exit 1
-fi
-fi
 
-  echo fixing links
+cwd=`pwd`
+echo "render and publish english"
+cd $cwd/Rway
+bash utils/_render-publish.sh $render
 
-  Rscript utils/fix-links.r
-  
-  echo publishing
 
-  quarto publish --no-prompt --no-render --no-browser gh-pages
+echo "render and publish english"
+cd $cwd/enfR
+bash utils/_render-publish.sh $render
 
 
 
